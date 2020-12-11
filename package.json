@@ -11,8 +11,9 @@
   "dependencies": {
     "antlr4": "^4.9.0",
     "core-js": "^3.6.5",
+    "prismjs": "^1.22.0",
     "vue": "^2.6.11",
-    "vue-json-viewer": "^2.2.13",
+    "vue-prism-component": "^1.2.0",
     "vuetify": "^2.2.11",
     "webpack": "^4.43.0",
     "yarn": "^1.22.4"

@@ -6,7 +6,7 @@
         <v-spacer></v-spacer>
       </v-app-bar>
 
-      <v-main>
+      <v-main class="fill-height">
         <v-snackbar v-model="snackbar" multi-line top color="red" timeout="-1">
           {{ errorMessage }}
           <template v-slot:action="{ attrs }">
@@ -15,38 +15,38 @@
             </v-btn>
           </template>
         </v-snackbar>
-        <v-row>
-          <v-col cols="6">
-            <v-card>
-              <v-card-title>
-                <span class="headline">Code</span>
-              </v-card-title>
-              <v-card-text>
-                <v-textarea :value="code" ref="textarea" dense rows="1"></v-textarea>
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="green darken-1" text @click="compile">Compile</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-col>
-          <v-col cols="6">
-            <v-card>
-              <v-card-title>
-                <span class="headline">Compiled JSON</span>
-              </v-card-title>
-              <v-card-text>
-                <div style="display: flex">
-                  <v-textarea :value="json" ref="textarea" dense rows="1"/>
-                  <v-btn @click="copyJson()" icon>
-                    <v-icon>mdi-content-copy</v-icon>
-                  </v-btn>
-                </div>
-                <json-viewer :value="jsonObject" :expand-depth=5></json-viewer>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
+        <v-container class="fill-height">
+          <v-row class="fill-height">
+            <v-col cols="6">
+              <v-card class="fill-height">
+                <v-card-title>
+                  <span class="headline">Code</span>
+                </v-card-title>
+                <v-card-text>
+                  <v-textarea v-model="code" ref="textarea" dense rows="1" auto-grow></v-textarea>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="green darken-1" text @click="compile">Compile</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-col>
+            <v-col cols="6">
+              <v-card class="fill-height">
+                <v-card-title>
+                  <span class="headline">Compiled JSON</span>
+                </v-card-title>
+                <v-card-text>
+                  <prism id="json" language="json">{{ json }}</prism>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="green darken-1" text @click="copyJson">Copy</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-main>
 
       <v-footer app color="blue-grey" class="white--text">
@@ -59,22 +59,25 @@
 
 <style>
 
-.scrollable {
-  overflow-y: auto;
-  max-height: calc(100vh - 124px);
+.v-application code {
+  background-color: transparent !important;
 }
+
 </style>
 
 <script>
-import JsonViewer from 'vue-json-viewer'
 import compile from "@/compiler/compiler";
+import 'prismjs'
+import 'prismjs/themes/prism.css'
+import 'prismjs/components/prism-json'
+import Prism from 'vue-prism-component'
 
 export default {
   props: {
     source: String,
   },
   components: {
-    JsonViewer
+    Prism
   },
   methods: {
     clearAll() {
@@ -82,9 +85,12 @@ export default {
       this.errorMessage = "";
     },
     copyJson() {
-      let element = this.$refs.textarea.$el.querySelector('textarea');
-      element.select();
-      element.setSelectionRange(0, this.json.length);
+      let node = document.getElementById('json');
+      let selection = window.getSelection();
+      let range = document.createRange();
+      range.selectNodeContents(node);
+      selection.removeAllRanges();
+      selection.addRange(range);
       document.execCommand("copy");
     },
     showErrorMessage(msg) {
@@ -99,8 +105,7 @@ export default {
       this.jsonObject = JSON.parse(this.json);
     }
   },
-  computed: {
-  },
+  computed: {},
   data: () => ({
     errorMessage: null,
     snackbar: false,
