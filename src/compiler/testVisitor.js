@@ -30,8 +30,13 @@ export default class TestVisitor extends EventLangVisitor {
         } else {
             f.test = ctx.name(0).getText();
         }
+        if (ctx.value().length === 2) {
+            f.domain = valueToString(ctx.value(0));
+            f.value = valueToString(ctx.value(1));
+        } else {
+            f.value = valueToString(ctx.value(0));
+        }
         f.operator = ctx.operator().getText();
-        f.value = valueToString(ctx.value());
         return f;
     }
 }
