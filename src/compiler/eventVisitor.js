@@ -13,8 +13,8 @@ export default class EventVisitor extends EventLangVisitor {
         } else {
             let e = new Event();
             e.sequence = [];
-            for (let statementContext in ctx.statement()) {
-                e.sequence.push(this.visit(statementContext));
+            for (let i = 0; i < ctx.statement().length;i++) {
+                e.sequence.push(this.visit(ctx.statement(i)));
             }
             return e;
         }
